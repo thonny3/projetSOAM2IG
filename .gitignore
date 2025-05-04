@@ -1,0 +1,16 @@
+# Ignore tous les node_modules dans n'importe quel sous-dossier
+**/node_modules/
+
+# Ignore tous les fichiers .env dans tous les services
+**/.env
+
+# Logs
+**/*.log
+
+# Fichiers temporaires
+*.tmp
+*.swp
+
+# Fichiers système
+.DS_Store
+Thumbs.db

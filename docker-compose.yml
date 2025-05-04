@@ -1,0 +1,64 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  mysql-employe:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: employe_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+
+  mysql-demande:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: demande_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3308:3306"
+
+  mysql-notification:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: notification_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3309:3306"
+
+  employe-service:
+    build: ./employe-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mysql-employe
+
+  demande-service:
+    build: ./demande-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mysql-demande
+      - kafka
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mysql-notification
+      - kafka
